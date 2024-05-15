@@ -1,18 +1,17 @@
 #!/bin/bash
 set -e
 
-# Convert line endings to Unix format
-dos2unix "$0"
+# Ensure line endings are Unix format for sourced files (if any)
+# dos2unix <list of files>
 
-# Rest of your script
+# Update package lists and install necessary packages
 sudo apt-get update
-sudo apt-get install -y nodejs npm
-
-# Install build tools
-sudo apt-get install -y build-essential
+sudo apt-get install -y nodejs npm build-essential
 
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+# Load NVM script into current shell session
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -24,7 +23,12 @@ nvm use 18
 npm install
 npm install ts-node --legacy-peer-deps
 
-# Terraform installation
-sudo apt-get install -y software-properties-common
-sudo apt-add-repository --yes --update https://apt.releases.hashicorp.com
+# Add HashiCorp GPG key for Terraform repository
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+# Add HashiCorp repository
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list >/dev/null
+
+# Update package lists again and install Terraform
+sudo apt-get update
 sudo apt-get install -y terraform
