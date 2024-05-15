@@ -11,7 +11,7 @@ jobs:
     env:
       AWS_REGION: eu-west-1
       GITBRANCH: ${{ github.ref.split('/')[2] }}
-      AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ basename $(dirname ${{ github.ref }}) }}
+      AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ github.event.ref_type == 'branch' && contains(github.event.ref, 'refs/heads/') && github.event.ref }}
       scannerHome: SonarQubeScanner4.0
       SLACK_CHANNEL: your-slack-channel
       AWS_PROFILE: dev
