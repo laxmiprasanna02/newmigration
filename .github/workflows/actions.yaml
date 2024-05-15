@@ -11,7 +11,7 @@ jobs:
     env:
       AWS_REGION: eu-west-1
       GITBRANCH: ${{ github.ref.split('/')[2] }}
-      AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ github.ref.split('/')[2] }}
+      AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ basename $(dirname ${{ github.ref }}) }}
       scannerHome: SonarQubeScanner4.0
       SLACK_CHANNEL: your-slack-channel
       AWS_PROFILE: dev
@@ -78,10 +78,3 @@ jobs:
           fields: 'repo,commit,author,action'
           title: "Deploy ${{ github.run_number }} for platform-manual-services FAILED"
           message: "Build ${{ github.run_number }} for platform-manual-services failed. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-   
-  #   - name: Configure AWS credentials
-  #    uses: aws-actions/configure-aws-credentials@v1
-  #    with:
-  #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #     aws-region: ${{ env.AWS_REGION }}
