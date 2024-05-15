@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
-# Install Node.js
+# Convert line endings to Unix format
+dos2unix "$0"
+
+# Rest of your script
 sudo apt-get update
 sudo apt-get install -y nodejs npm
 
@@ -25,17 +28,3 @@ npm install ts-node --legacy-peer-deps
 sudo apt-get install -y software-properties-common
 sudo apt-add-repository --yes --update https://apt.releases.hashicorp.com
 sudo apt-get install -y terraform
-
-# # Set AWS environment variables
-# export AWS_REGION=eu-west-1
-# export AWS_PROFILE=dev
-# export TF_VAR_profile=dev
-
-# Navigate to the Terraform directory
-# cd Terraform
-
-# # Initialize Terraform
-# terraform init -backend-config="bucket=eu-eu-west-1-dev-156696388136-terraform-state-backend-187" -force-copy
-
-# # Apply Terraform changes
-# terraform apply --auto-approve
