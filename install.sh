@@ -26,10 +26,10 @@ sudo apt-get install -y software-properties-common
 sudo apt-add-repository --yes --update https://apt.releases.hashicorp.com
 sudo apt-get install -y terraform
 
-# Set AWS environment variables
-export AWS_REGION=eu-west-1
-export AWS_PROFILE=dev
-export TF_VAR_profile=dev
+# # Set AWS environment variables
+# export AWS_REGION=eu-west-1
+# export AWS_PROFILE=dev
+# export TF_VAR_profile=dev
 
 # Navigate to the Terraform directory
 # cd Terraform
