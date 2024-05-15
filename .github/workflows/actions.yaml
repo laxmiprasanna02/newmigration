@@ -20,10 +20,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Prepare Dependencies
-        run: |
-          git submodule update --init --recursive
-          /bin/sh install.sh
+      # - name: Prepare Dependencies
+      #   run: |
+      #     git submodule update --init --recursive
+      #     /bin/sh install.sh
 
       # - name: Send Notification to Slack
       #   uses: rtCamp/action-slack-notify@v2
