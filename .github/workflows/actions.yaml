@@ -20,7 +20,7 @@ jobs:
         run: |
           git submodule update --init --recursive
           chmod +x install.sh
-          ./install.sh
+          bash install.sh
 
       # - name: Send Notification to Slack
       #   uses: rtCamp/action-slack-notify@v2
