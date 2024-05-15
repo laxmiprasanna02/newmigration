@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: eu-west-1
-      GITBRANCH: ${{ github.ref.split('/')[2] }}
-      AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ github.event.ref_type == 'branch' && contains(github.event.ref, 'refs/heads/') && github.event.ref }}
-      scannerHome: SonarQubeScanner4.0
-      SLACK_CHANNEL: your-slack-channel
+      # GITBRANCH: ${{ github.ref.split('/')[2] }}
+      # AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ github.event.ref_type == 'branch' && contains(github.event.ref, 'refs/heads/') && github.event.ref }}
+      # scannerHome: SonarQubeScanner4.0
+      # SLACK_CHANNEL: your-slack-channel
       AWS_PROFILE: dev
 
     steps:
@@ -25,56 +25,56 @@ jobs:
           git submodule update --init --recursive
           /bin/sh install.sh
 
-      - name: Send Notification to Slack
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_COLOR: '#FFFF00'
-          SLACK_TITLE: "Build starting for platform-manual-services"
-          SLACK_MESSAGE: "Build ${{ github.run_number }} for platform-manual-services is STARTING. :rocket: View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+      # - name: Send Notification to Slack
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_COLOR: '#FFFF00'
+      #     SLACK_TITLE: "Build starting for platform-manual-services"
+      #     SLACK_MESSAGE: "Build ${{ github.run_number }} for platform-manual-services is STARTING. :rocket: View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      #     SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
 
-      - name: Fleet Indexing Script
-        run: |
-          sudo sh scripts/iot-fleet-indexing-config.sh
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          AWS_PROFILE: ${{ env.AWS_PROFILE }}
+      # - name: Fleet Indexing Script
+      #   run: |
+      #     sudo sh scripts/iot-fleet-indexing-config.sh
+      #   env:
+      #     AWS_REGION: ${{ env.AWS_REGION }}
+      #     AWS_PROFILE: ${{ env.AWS_PROFILE }}
 
-      - name: SonarQube analysis
-        run: |
-          ${{ env.scannerHome }}/bin/sonar-scanner \
-            -Dsonar.projectKey=platform-manual-services-${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=http://sonarqube.tools.emea-iot.aws.fluidra.com:9000 \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.working.directory=${{ github.workspace }}/sonar
+      # - name: SonarQube analysis
+      #   run: |
+      #     ${{ env.scannerHome }}/bin/sonar-scanner \
+      #       -Dsonar.projectKey=platform-manual-services-${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} \
+      #       -Dsonar.sources=. \
+      #       -Dsonar.host.url=http://sonarqube.tools.emea-iot.aws.fluidra.com:9000 \
+      #       -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+      #       -Dsonar.working.directory=${{ github.workspace }}/sonar
 
-      - name: Deploy
-        run: |
-          sls plugin install -n serverless-prune-plugin --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }}
-          sls prune --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} -n 50
-          sls -v
-          sls deploy --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} --force
+      # - name: Deploy
+      #   run: |
+      #     sls plugin install -n serverless-prune-plugin --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }}
+      #     sls prune --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} -n 50
+      #     sls -v
+      #     sls deploy --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} --force
 
-      - name: Send Notification to Slack (Success)
-        if: success()
-        uses: rtCamp/action-slack-notify@v2
-        with:
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-          color: '#00FF00'
-          status: 'Success'
-          fields: 'repo,commit,author,action'
-          title: "Deploy ${{ github.run_number }} for platform-manual-services SUCCESS"
-          message: "Build ${{ github.run_number }} for platform-manual-services completed successfully. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      # - name: Send Notification to Slack (Success)
+      #   if: success()
+      #   uses: rtCamp/action-slack-notify@v2
+      #   with:
+      #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      #     color: '#00FF00'
+      #     status: 'Success'
+      #     fields: 'repo,commit,author,action'
+      #     title: "Deploy ${{ github.run_number }} for platform-manual-services SUCCESS"
+      #     message: "Build ${{ github.run_number }} for platform-manual-services completed successfully. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      - name: Send Notification to Slack (Failure)
-        if: failure()
-        uses: rtCamp/action-slack-notify@v2
-        with:
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-          color: '#FF0000'
-          status: 'Failure'
+      # - name: Send Notification to Slack (Failure)
+      #   if: failure()
+      #   uses: rtCamp/action-slack-notify@v2
+      #   with:
+      #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      #     color: '#FF0000'
+      #     status: 'Failure'
           fields: 'repo,commit,author,action'
           title: "Deploy ${{ github.run_number }} for platform-manual-services FAILED"
           message: "Build ${{ github.run_number }} for platform-manual-services failed. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
