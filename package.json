@@ -1,0 +1,9 @@
+{
+  "name": "platform-manual-services",
+  "description": "",
+  "version": "0.1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-stage-manager": "^1.0.5"
+  }
+}

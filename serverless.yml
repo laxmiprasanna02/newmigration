@@ -1,0 +1,95 @@
+service: platform-manual-services
+variablesResolutionMode: 20210326
+plugins:
+  - serverless-stage-manager
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 128
+  timeout: 10
+  stage: ${opt:stage, 'dev'}
+  profile: ${self:custom.awsProfile.${opt:stage, self:provider.stage}}
+  region: ${self:custom.awsRegion.${opt:stage, self:provider.stage}}
+  stackTags:
+    Environment: ${opt:stage, self:provider.stage}
+    Repo: platform-manual-services
+    Owner: EUCloud_Dev
+resources:
+  Conditions:
+  # Create Data Lake S3 bucket only on Dev Account
+    ifItIsNotProd:
+      Fn::Not:
+        - Fn::Equals:
+            - ${self:provider.stage}
+            - prod
+    ifItIsProd: 
+      Fn::Equals:
+        - ${self:provider.stage}
+        - prod
+    ifItIsDev:
+      Fn::Equals:
+        - ${self:provider.stage}
+        - dev
+
+  Resources:
+    # S3 Buckets
+    bucketForDataLake: ${file(Resources/s3Buckets.yml):bucketForDataLake}
+    bucketForProdDataLakeReplication: ${file(Resources/s3Buckets.yml):bucketForProdDataLakeReplication}
+    bucketForAthenaQuery: ${file(Resources/s3Buckets.yml):bucketForAthenaQuery}
+    bucketForTerraformState: ${file(Resources/s3Buckets.yml):bucketForTerraformState}
+
+    # IAM Roles
+    zodiacLambdaDynamoDBRole: ${file(Resources/iamRoles.yml):zodiacLambdaDynamoDBRole}
+    zodiacLambdaIotRole: ${file(Resources/iamRoles.yml):zodiacLambdaIotRole}
+    zodiacLambdaIoTS3ReadOnlyRole: ${file(Resources/iamRoles.yml):zodiacLambdaIoTS3ReadOnlyRole}
+    cognitoMobileAuthRole: ${file(Resources/iamRoles.yml):cognitoMobileAuthRole}
+    cognitoMobileUnauthRole: ${file(Resources/iamRoles.yml):cognitoMobileUnauthRole}
+
+    # DynamoDB Tables
+    fluidraTerraformLock: ${file(Resources/dynamoDBTables.yml):fluidraTerraformLock}
+
+    # Cognito UserPool, Identity Pool and Clients
+    cognitoUserPool: ${file(Resources/cognitoUserPool.yml):cognitoUserPool}
+    cognitoUserPoolDomain: ${file(Resources/cognitoUserPool.yml):cognitoUserPoolDomain}
+    mobileClient: ${file(Resources/cognitoAppClients.yml):mobileClient}
+    alexaClient: ${file(Resources/cognitoAppClients.yml):alexaClient}
+    magilineClient: ${file(Resources/cognitoAppClients.yml):magilineClient}
+    mobileIdentityPool: ${file(Resources/cognitoIdentityPool.yml):mobileIdentityPool}
+    mobileIdentityPoolRoleAttachment: ${file(Resources/cognitoIdentityPool.yml):mobileIdentityPoolRoleAttachment}
+
+custom:
+  stages:
+    - dev
+    - prod
+    - staging
+    - test
+
+  awsRegion:
+    dev: eu-west-1
+    staging: eu-west-1
+    test: us-east-1
+    prod: us-east-1
+
+  awsProfile:
+    dev: dev
+    staging: staging
+    test: test
+    prod: prod
+    
+  accountId:
+    dev: '156696388136'
+    staging: staging
+    test: test
+    prod: prod
+
+package:
+  exclude:
+    - .eslintrc.yml
+    - .gitignore
+    - .git/**
+    - .vscode/**
+    - test/**
+    - coverage/**
+    - package-lock.json
+    - README.md
