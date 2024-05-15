@@ -19,7 +19,8 @@ jobs:
       - name: Prepare Dependencies
         run: |
           git submodule update --init --recursive
-          bash install.sh
+          chmod +x install.sh
+          ./install.sh
 
       # - name: Send Notification to Slack
       #   uses: rtCamp/action-slack-notify@v2
