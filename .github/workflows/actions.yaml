@@ -52,7 +52,13 @@ jobs:
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
           AWS_REGION: eu-west-1
           AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ env.BRANCH_NAME }}
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
+      - name: Install Serverless Framework
+        run: npm install -g serverless
       - name: Deploy
         run: |
           sls plugin install -n serverless-prune-plugin --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }}
