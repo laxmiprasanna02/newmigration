@@ -12,7 +12,7 @@ jobs:
       SLACK_CHANNEL: 'Laxmi Prasanna'
       AWS_REGION: eu-west-1
       AWS_PROFILE: dev
-      AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ github.ref.split('/')[2] == 'test' ? 'test' : github.ref.split('/')[2] == 'develop' ? 'dev' : github.ref.split('/')[2] == 'staging' ? 'staging' : github.ref.split('/')[2] == 'master' ? 'root' : 'unknown' }}
+          
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
