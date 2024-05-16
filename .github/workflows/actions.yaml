@@ -19,18 +19,17 @@ jobs:
       
       - name: Extract branch name
         id: extract_branch
-        run: echo "BRANCH_NAME=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')" >> $GITHUB_ENV
-    
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
       - name: Set Environment Stage
         run: |
-          BRANCH=${{ github.ref.split('/')[2] }}
-          if [ "$BRANCH" == "test" ]; then
+          if [ "${{ env.BRANCH_NAME }}" == "test" ]; then
             echo "AWS_DEPLOY_STAGE_ENVIRONMENT=test" >> $GITHUB_ENV
-          elif [ "$BRANCH" == "develop" ]; then
+          elif [ "${{ env.BRANCH_NAME }}" == "develop" ]; then
             echo "AWS_DEPLOY_STAGE_ENVIRONMENT=dev" >> $GITHUB_ENV
-          elif [ "$BRANCH" == "staging" ]; then
+          elif [ "${{ env.BRANCH_NAME }}" == "staging" ]; then
             echo "AWS_DEPLOY_STAGE_ENVIRONMENT=staging" >> $GITHUB_ENV
-          elif [ "$BRANCH" == "master" ]; then
+          elif [ "${{ env.BRANCH_NAME }}" == "master" ]; then
             echo "AWS_DEPLOY_STAGE_ENVIRONMENT=root" >> $GITHUB_ENV
           else
             echo "AWS_DEPLOY_STAGE_ENVIRONMENT=unknown" >> $GITHUB_ENV
@@ -44,35 +43,15 @@ jobs:
           chmod +x install.sh
           bash install.sh
 
-
       - name: Send Notification to Slack
         uses: rtCamp/action-slack-notify@v2
         env:
-          # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_COLOR: '#FFFF00'
           SLACK_TITLE: "Build starting for platform-manual-services"
           SLACK_MESSAGE: "Build ${{ github.run_number }} for platform-manual-services is STARTING. :rocket: View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
           AWS_REGION: eu-west-1
           AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ env.BRANCH_NAME }}
-          # scannerHome: SonarQubeScanner4.0
-          # AWS_PROFILE: dev
-
-      # - name: Fleet Indexing Script
-      #   run: |
-      #     sudo sh scripts/iot-fleet-indexing-config.sh
-      #   env:
-      #     AWS_REGION: ${{ env.AWS_REGION }}
-      #     AWS_PROFILE: ${{ env.AWS_PROFILE }}
-
-      # - name: SonarQube analysis
-      #   run: |
-      #     ${{ env.scannerHome }}/bin/sonar-scanner \
-      #       -Dsonar.projectKey=platform-manual-services-${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} \
-      #       -Dsonar.sources=. \
-      #       -Dsonar.host.url=http://sonarqube.tools.emea-iot.aws.fluidra.com:9000 \
-      #       -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-      #       -Dsonar.working.directory=${{ github.workspace }}/sonar
 
       - name: Deploy
         run: |
