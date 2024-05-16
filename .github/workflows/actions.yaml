@@ -12,6 +12,7 @@ jobs:
       SLACK_CHANNEL: 'Laxmi Prasanna'
       AWS_REGION: eu-west-1
       AWS_PROFILE: dev
+      AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ github.ref.split('/')[2] == 'test' ? 'test' : github.ref.split('/')[2] == 'develop' ? 'dev' : github.ref.split('/')[2] == 'staging' ? 'staging' : github.ref.split('/')[2] == 'master' ? 'root' : 'unknown' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -43,12 +44,12 @@ jobs:
           # scannerHome: SonarQubeScanner4.0
           # AWS_PROFILE: dev
 
-      - name: Fleet Indexing Script
-        run: |
-          sudo sh scripts/iot-fleet-indexing-config.sh
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          AWS_PROFILE: ${{ env.AWS_PROFILE }}
+      # - name: Fleet Indexing Script
+      #   run: |
+      #     sudo sh scripts/iot-fleet-indexing-config.sh
+      #   env:
+      #     AWS_REGION: ${{ env.AWS_REGION }}
+      #     AWS_PROFILE: ${{ env.AWS_PROFILE }}
 
       # - name: SonarQube analysis
       #   run: |
@@ -59,31 +60,31 @@ jobs:
       #       -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
       #       -Dsonar.working.directory=${{ github.workspace }}/sonar
 
-      # - name: Deploy
-      #   run: |
-      #     sls plugin install -n serverless-prune-plugin --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }}
-      #     sls prune --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} -n 50
-      #     sls -v
-      #     sls deploy --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} --force
+      - name: Deploy
+        run: |
+          sls plugin install -n serverless-prune-plugin --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }}
+          sls prune --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} -n 50
+          sls -v
+          sls deploy --stage ${{ env.AWS_DEPLOY_STAGE_ENVIRONMENT }} --force
 
-      # - name: Send Notification to Slack (Success)
-      #   if: success()
-      #   uses: rtCamp/action-slack-notify@v2
-      #   with:
-      #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-      #     color: '#00FF00'
-      #     status: 'Success'
-      #     fields: 'repo,commit,author,action'
-      #     title: "Deploy ${{ github.run_number }} for platform-manual-services SUCCESS"
-      #     message: "Build ${{ github.run_number }} for platform-manual-services completed successfully. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      - name: Send Notification to Slack (Success)
+        if: success()
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          color: '#00FF00'
+          status: 'Success'
+          fields: 'repo,commit,author,action'
+          title: "Deploy ${{ github.run_number }} for platform-manual-services SUCCESS"
+          message: "Build ${{ github.run_number }} for platform-manual-services completed successfully. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      # - name: Send Notification to Slack (Failure)
-      #   if: failure()
-      #   uses: rtCamp/action-slack-notify@v2
-      #   with:
-      #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-      #     color: '#FF0000'
-      #     status: 'Failure'
-      #     fields: 'repo,commit,author,action'
-      #     title: "Deploy ${{ github.run_number }} for platform-manual-services FAILED"
-      #     message: "Build ${{ github.run_number }} for platform-manual-services failed. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      - name: Send Notification to Slack (Failure)
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          color: '#FF0000'
+          status: 'Failure'
+          fields: 'repo,commit,author,action'
+          title: "Deploy ${{ github.run_number }} for platform-manual-services FAILED"
+          message: "Build ${{ github.run_number }} for platform-manual-services failed. View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
