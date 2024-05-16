@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SLACK_CHANNEL: 'your-slack-channel'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -26,18 +28,18 @@ jobs:
           bash install.sh
 
 
-      # - name: Send Notification to Slack
-      #   uses: rtCamp/action-slack-notify@v2
-      #   env:
-      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      #     SLACK_COLOR: '#FFFF00'
-      #     SLACK_TITLE: "Build starting for platform-manual-services"
-      #     SLACK_MESSAGE: "Build ${{ github.run_number }} for platform-manual-services is STARTING. :rocket: View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-      #     SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-      #     AWS_REGION: eu-west-1
-      #     AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ env.BRANCH_NAME }}
-      #     scannerHome: SonarQubeScanner4.0
-      #     AWS_PROFILE: dev
+      - name: Send Notification to Slack
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: '#FFFF00'
+          SLACK_TITLE: "Build starting for platform-manual-services"
+          SLACK_MESSAGE: "Build ${{ github.run_number }} for platform-manual-services is STARTING. :rocket: View Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+          AWS_REGION: eu-west-1
+          AWS_DEPLOY_STAGE_ENVIRONMENT: ${{ env.BRANCH_NAME }}
+          # scannerHome: SonarQubeScanner4.0
+          # AWS_PROFILE: dev
 
       # - name: Fleet Indexing Script
       #   run: |
