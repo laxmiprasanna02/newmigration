@@ -22,7 +22,19 @@ jobs:
         run: echo "BRANCH_NAME=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')" >> $GITHUB_ENV
     
       - name: Set Environment Stage
-        run: echo "AWS_DEPLOY_STAGE_ENVIRONMENT=${{ github.ref.split('/')[2] == 'test' && 'test' || github.ref.split('/')[2] == 'develop' && 'dev' || github.ref.split('/')[2] == 'staging' && 'staging' || github.ref.split('/')[2] == 'master' && 'root' || 'unknown' }}" >> $GITHUB_ENV
+        run: |
+          BRANCH=${{ github.ref.split('/')[2] }}
+          if [ "$BRANCH" == "test" ]; then
+            echo "AWS_DEPLOY_STAGE_ENVIRONMENT=test" >> $GITHUB_ENV
+          elif [ "$BRANCH" == "develop" ]; then
+            echo "AWS_DEPLOY_STAGE_ENVIRONMENT=dev" >> $GITHUB_ENV
+          elif [ "$BRANCH" == "staging" ]; then
+            echo "AWS_DEPLOY_STAGE_ENVIRONMENT=staging" >> $GITHUB_ENV
+          elif [ "$BRANCH" == "master" ]; then
+            echo "AWS_DEPLOY_STAGE_ENVIRONMENT=root" >> $GITHUB_ENV
+          else
+            echo "AWS_DEPLOY_STAGE_ENVIRONMENT=unknown" >> $GITHUB_ENV
+          fi    
       - name: Prepare Dependencies
         run: |
           sudo apt-get update
