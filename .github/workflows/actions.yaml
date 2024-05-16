@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SLACK_CHANNEL: 'Laxmi Prasanna'
+      AWS_REGION: eu-west-1
+      AWS_PROFILE: dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -41,12 +43,12 @@ jobs:
           # scannerHome: SonarQubeScanner4.0
           # AWS_PROFILE: dev
 
-      # - name: Fleet Indexing Script
-      #   run: |
-      #     sudo sh scripts/iot-fleet-indexing-config.sh
-      #   env:
-      #     AWS_REGION: ${{ env.AWS_REGION }}
-      #     AWS_PROFILE: ${{ env.AWS_PROFILE }}
+      - name: Fleet Indexing Script
+        run: |
+          sudo sh scripts/iot-fleet-indexing-config.sh
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          AWS_PROFILE: ${{ env.AWS_PROFILE }}
 
       # - name: SonarQube analysis
       #   run: |
