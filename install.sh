@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eo pipefail
+# set -eo pipefail
 
 # Ensure curl and lsb-release are installed
 sudo apt-get update
