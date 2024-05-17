@@ -37,9 +37,9 @@ jobs:
       - name: Prepare Dependencies
         run: |
           sudo apt-get update
-          # sudo apt-get install -y dos2unix
+          sudo apt-get install -y dos2unix
           git submodule update --init --recursive
-          # dos2unix install.sh
+          dos2unix install.sh
           chmod +x install.sh
           bash install.sh
 
