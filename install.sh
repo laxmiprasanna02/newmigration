@@ -3,7 +3,7 @@ set -eo pipefail
 
 # Ensure curl and lsb-release are installed
 sudo apt-get update
-sudo apt-get install -y curl lsb-release dos2unix nodejs npm build-essential
+# sudo apt-get install -y curl lsb-release dos2unix nodejs npm build-essential
 
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
