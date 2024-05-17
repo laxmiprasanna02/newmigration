@@ -17,9 +17,9 @@ nvm use 18
 npm install
 npm install ts-node --legacy-peer-deps
 
-# Install Terraform
+# Install Terraform (using HashiCorp repository)
 sudo apt update  # Update package lists
-sudo snap install terraform 
+sudo apt install -y terraform
 
 # Set environment variables for AWS and Terraform
 export AWS_REGION=eu-west-1
