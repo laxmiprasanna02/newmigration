@@ -36,6 +36,6 @@ export AWS_PROFILE=dev
 export TF_VAR_profile=dev
 
 # Initialize and apply Terraform configuration
-cd Terraform
-terraform init -backend-config="bucket=eu-west-1-dev-156696388136-terraform-state-backend" -force-copy
-terraform apply --auto-approve
+# cd Terraform
+# terraform init -backend-config="bucket=eu-west-1-dev-156696388136-terraform-state-backend" -force-copy
+# terraform apply --auto-approve
