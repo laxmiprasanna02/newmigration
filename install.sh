@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Ensure curl and lsb-release are installed
-sudo apt update  # Update package lists (uncommented)
+sudo apt update
 
-# Install required packages
+# Install required packages (including build-essential)
 sudo apt install -y curl lsb-release dos2unix nodejs npm build-essential
 
 # Install NVM (if not already installed)
