@@ -19,7 +19,7 @@ npm install ts-node --legacy-peer-deps
 
 # Install Terraform
 sudo apt update  # Update package lists
-sudo apt install -y terraform
+snap install terraform -y
 
 # Set environment variables for AWS and Terraform
 export AWS_REGION=eu-west-1
